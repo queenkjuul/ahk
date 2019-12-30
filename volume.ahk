@@ -4,10 +4,9 @@
 ; Does not show an icon, so hyper+Z will exit (hyper+Z is my default exit command,
 ; therefore most custom key scripts will all exit at once when pressed)
 
-#NoTrayIcon
+; #NoTrayIcon
 Pause::Volume_Up
 ScrollLock::Volume_Down
 +Pause::Pause
 +ScrollLock::ScrollLock
-^End::Volume_Mute
-#^!+z::ExitApp
+^Ins::Volume_Mute
