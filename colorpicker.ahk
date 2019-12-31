@@ -25,8 +25,8 @@ ColoretteIcon := A_ScriptFullPath
 Traytip, Colorette:, RIGHTCLICK to copy HEX value`nAdd ALT for RGB value`nPress SPACE for a color dialogue, 5
 OnExit, Exit
 SetSystemCursor("IDC_Cross")
-FileCreateDir, data
-FileInstall, data\pick_click.wav, data\pick_click.wav
+;FileCreateDir, data
+;FileInstall, data\pick_click.wav, data\pick_click.wav
 If (FileExist("colorette.exe"))
    Menu, Tray, Icon, Colorette.exe
 ; MAIN LOOOP: Pick Color
