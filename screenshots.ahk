@@ -7,64 +7,133 @@
     General Keys Setup:
         PrtScn:     open Snipping Tool. If already open, focus it, and start a new rectangle selection
         Space:      if Snipping Tool is open, focus it, and start a new Single Window selection
-        Enter:      if Snipping Tool is open, focus it, and take a Full Screen screenshot
+        3:          if Snipping Tool is open, focus it, and take a Full Screen screenshot
+        f:          if Snipping Tool is open, focus it, and take a Free Form snip
+        r:          if Snipping Tool is open, focus it, and take a Rectangle snip
         Win+PrtScn:     Not actually assigned in this script, but Windows will engage default Win+PrtScn behavior (save full screenshot to Picture/Screenshots)
         Control+PrtScn: Not actually assigned in this script, but Windows will engage default PrtScn behavior (copy full screenshot to clipboard)
         Control+Shift+4 (optional): Optional line to assign the Mac screenshot shortcut to PrtScn
-        Control+Shift+3 (optional): Optional line to assign the Mac full screen screenshot command (will take a full-screen Snip, not save like Win+PrtScn)
 
 */
 
-; #NoTrayIcon
-snipclass = Microsoft-Windows-SnipperToolbar
-snipedit = Microsof-Windows-SnipperEditor
+#NoTrayIcon
+#SingleInstance Force
+
 snippath = %windir%\system32\SnippingTool.exe
 sniptitle = Snipping Tool
+
+; functions
+
+activateWindow()
+{
+    WinActivate, ahk_exe snippath
+}
+
 newRectangle()
 {
-    WinGetActiveStats, Title, Width, Height, X, Y
-    if (Title = %sniptitle%)
-    {
-        Send !{m}
-        Send {r}
-        Send !{n}
-    }
+    ControlSend, , !n, ahk_exe SnippingTool.exe
+    Sleep, 500
+    ControlSend, , !m, ahk_exe SnippingTool.exe
+    ControlSend, , r, ahk_exe SnippingTool.exe
 }
-#^!+z::ExitApp
-PrintScreen::
+
+newWindow()
 {
-    WinGetActiveStats, Title, Width, Height, X, Y
-    if (not WinExist("ahk_class %snipclass%") or WinExist("ahk_class %snipedit%"))
+    ControlSend, , !n, ahk_exe SnippingTool.exe
+    Sleep, 500
+    ControlSend, , !m, ahk_exe SnippingTool.exe
+    ControlSend, , w, ahk_exe SnippingTool.exe
+}
+
+newFullscreen()
+{
+    ControlSend, , !n, ahk_exe SnippingTool.exe
+    Sleep, 500
+    ControlSend, , !m, ahk_exe SnippingTool.exe
+    ControlSend, , s, ahk_exe SnippingTool.exe
+}
+
+newFreeform()
+{
+    ControlSend, , !n, ahk_exe SnippingTool.exe
+    Sleep, 500
+    ControlSend, , !m, ahk_exe SnippingTool.exe
+    ControlSend, , f, ahk_exe SnippingTool.exe
+}
+
+; hotkeys
+
+PrintSCreen::
+{
+    if (Not WinExist("ahk_exe SnippingTool.exe"))
     {
-        Run, %snippath%,,,pid
-        WinWait ahk_class %snipclass%
-        WinActivate, ahk_pid %pid%
-        Send !{m}
-        Send {r}
-        Send !{n}
+        Run, %snippath%, , , pid
     }
-    else (WinExist("ahk_exe SnippingTool.exe"))
-    {
-        WinActivate, ahk_exe SnippingTool.exe
-        ;MsgBox WinExist
-        Send !{m}
-        Send {r}
-        Send !{n}
-    }
+    WinWait, ahk_exe SnippingTool.exe
+    activateWindow()
+    newRectangle()
+    Return
 }
 
 $Space::
 {
     WinGetActiveStats, Title, Width, Height, X, Y
-    ;MsgBox %Title%
-    if (Title = Snipping Tool)
+    if (Title = sniptitle)
     {
-        ;MsgBox Detected Snipper
-        Send !{m}
-        Send {w}
+        newWindow()
+        Return
     }
     else
     {
         Send {Space} 
+        Return
     }
+    
 }
+
+$3::
+{
+    WinGetActiveStats, Title, Width, Height, X, Y
+    if (Title = sniptitle)
+    {
+        newFullscreen()
+        Return
+    }
+    else
+    {
+        Send {3} 
+        Return
+    }   
+}
+
+$f::
+{
+    WinGetActiveStats, Title, Width, Height, X, Y
+    if (Title = sniptitle)
+    {
+        newFreeform()
+        Return
+    }
+    else
+    {
+        Send {f} 
+        Return
+    }  
+}
+
+$r::
+{
+    WinGetActiveStats, Title, Width, Height, X, Y
+    if (Title = sniptitle)
+    {
+        newRectangle()
+        Return
+    }
+    else
+    {
+        Send {r} 
+        Return
+    }  
+}
+; uncomment this next line to enable macOS shortcut
+;^+4::Gosub, PrintScreen       ; ctrl+shift+4 for new rectangle (macOS Cmd+Shift+4 equivalent)
